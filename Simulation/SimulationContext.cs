@@ -2,6 +2,7 @@ namespace VegetableLine.Simulation;
 
 using VegetableLine.SimulationSettings;
 using VegetableLine.Models;
+using VegetableLine.Models.Enums;
 
 public class SimulationContext
 {
@@ -29,5 +30,14 @@ public class SimulationContext
     {
         SimulationSettings = settings;
         SeedData.Populate(this);
+    }
+
+    // Calcula el estado que se muestra en el dashboard para una estacion
+    // La condicion mas grave tiene prioridad.
+    public StationStatus GetStationStatus(Station station)
+    {
+        if (!station.IsRunning) return StationStatus.Stopped;
+        if (Alarms.Any(a => a.StationId == station.Id && a.IsActive)) return StationStatus.Alarm;
+        return StationStatus.Running;
     }
 }
