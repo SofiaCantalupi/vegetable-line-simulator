@@ -9,7 +9,10 @@ public class Cleaner : Station
     public override double Process(double kgIn, SimulationContext context)
     {
         var s = context.SimulationSettings.Cleaning;
-        double soil = kgIn * RandomHelper.Between(s.MinSoilRate, s.MaxSoilRate);
+        
+        double rate = RandomHelper.Between(s.MinSoilRate, s.MaxSoilRate) * context.CurrentOrder!.Batch.SoilFactor;
+        double soil = kgIn * rate;
+
         context.SoilRemovedKg += soil;
         return kgIn - soil;
     }

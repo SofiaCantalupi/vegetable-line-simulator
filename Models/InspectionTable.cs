@@ -9,7 +9,10 @@ public class InspectionTable : Station
     public override double Process(double kgIn, SimulationContext context)
     {
         var s = context.SimulationSettings.Inspection;
-        double rejected = kgIn * RandomHelper.Between(s.MinRejectRate, s.MaxRejectRate);
+
+        double rate = RandomHelper.Between(s.MinRejectRate, s.MaxRejectRate) * context.CurrentOrder!.Batch.DefectFactor;
+        double rejected = kgIn * rate;
+
         context.RejectedKg += rejected;
         return kgIn - rejected;
     }

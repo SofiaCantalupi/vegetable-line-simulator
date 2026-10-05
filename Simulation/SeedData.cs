@@ -1,4 +1,5 @@
 namespace VegetableLine.Simulation;
+
 using VegetableLine.Models;
 using VegetableLine.Models.Enums;
 
@@ -9,14 +10,15 @@ public static class SeedData
     {
         var weighing = context.SimulationSettings.Weighing;
 
+        //El lote 2 llega con mucha tierra (factor 1.8) y el 3 con papas defectuosas (factor 1.5)
         var batches = new List<Batch>
         {
             new() { Id = 1, Producer = "Agro Los Teros", Origin = "Balcarce",
                     Variety = PotatoVariety.Spunta, WeightKg = 6000, ArrivedAt = DateTime.Now.AddHours(-5) },
             new() { Id = 2, Producer = "Hnos. Ferreyra", Origin = "Villa Dolores",
-                    Variety = PotatoVariety.Asterix, WeightKg = 9000, ArrivedAt = DateTime.Now.AddHours(-3) },
+                    Variety = PotatoVariety.Asterix, WeightKg = 9000, ArrivedAt = DateTime.Now.AddHours(-3), SoilFactor = 1.8 },
             new() { Id = 3, Producer = "La Cosecha SRL", Origin = "Tafí del Valle",
-                    Variety = PotatoVariety.Donata, WeightKg = 12000, ArrivedAt = DateTime.Now.AddHours(-1) },
+                    Variety = PotatoVariety.Donata, WeightKg = 12000, ArrivedAt = DateTime.Now.AddHours(-1), DefectFactor = 1.5 },
         };
 
         context.Batches.AddRange(batches); // agrega todos los elementos de una vez
