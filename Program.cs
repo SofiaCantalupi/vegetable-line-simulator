@@ -10,6 +10,7 @@ builder.Services.AddOpenApi();
 builder.Services.AddSingleton<SimulationSettings>();
 builder.Services.AddSingleton<SimulationContext>();
 builder.Services.AddHostedService<LineSimulator>();
+builder.Services.AddSingleton<AlarmMonitor>();
 
 var app = builder.Build();
 
