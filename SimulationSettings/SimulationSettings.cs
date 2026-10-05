@@ -2,7 +2,7 @@ namespace VegetableLine.SimulationSettings;
 
 public class SimulationSettings
 {
-    public int TickIntervalSeconds { get; set;} = 2;
+    public int TickIntervalSeconds { get; set;} = 1;
     public int KgPerTick { get; set;} = 50;
     public double FailureProbabilityPerTick { get; set;} = 0.003;
     public int MinStoppageSeconds { get; set;} = 10;
