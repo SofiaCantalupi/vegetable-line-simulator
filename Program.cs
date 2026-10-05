@@ -8,6 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddOpenApi();
 
 builder.Services.AddSingleton<SimulationSettings>();
+builder.Services.AddSingleton<SimulationContext>();
 builder.Services.AddHostedService<LineSimulator>();
 
 var app = builder.Build();
