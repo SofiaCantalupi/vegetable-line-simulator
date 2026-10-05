@@ -1,6 +1,5 @@
 using VegetableLine.Models;
 using VegetableLine.Models.Enums;
-using VegetableLine.Models;
 
 namespace VegetableLine.Simulation;
 

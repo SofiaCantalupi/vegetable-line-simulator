@@ -29,7 +29,10 @@ public class LineSimulator : BackgroundService
         while (!stoppingToken.IsCancellationRequested)
         {
             _tickCount++;
-            Tick();
+            lock (_context.SyncLock)
+            {
+                Tick();
+            }
 
             // Espera el intervalo configurado sin bloquear el hilo.
             // Si la app se detiene durante la espera, el token la interrumpe.

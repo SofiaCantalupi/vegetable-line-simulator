@@ -8,6 +8,10 @@ public class SimulationContext
 {
     public SimulationSettings SimulationSettings { get; }
 
+    // El simulador lo toma durante cada tick y la API al leer datos o modificar alarmas,
+    // asi nadie ve el estado a medio actualizar.
+    public Lock SyncLock { get; } = new();
+
     public List<Batch> Batches { get; } = new();
     public List<ProductionOrder> Orders { get; } = new();
     public List<Station> Stations { get; } = new();
