@@ -1,4 +1,5 @@
 namespace VegetableLine.Simulation;
+
 using VegetableLine.Models;
 using VegetableLine.Models.Enums;
 
@@ -8,13 +9,16 @@ public class LineSimulator : BackgroundService
 {
     private readonly SimulationContext _context;
     private readonly ILogger<LineSimulator> _logger;
+
+    private readonly AlarmMonitor _alarmMonitor;
     //Contador de ticks desde que inicia la app
     private int _tickCount = 0;
 
-    public LineSimulator(SimulationContext context, ILogger<LineSimulator> logger)
+    public LineSimulator(SimulationContext context, ILogger<LineSimulator> logger, AlarmMonitor alarmMonitor)
     {
         _context = context;
         _logger = logger;
+        _alarmMonitor = alarmMonitor;
     }
 
     // Se ejecuta al inicia la app y corre hasta que se cierra.
@@ -39,25 +43,50 @@ public class LineSimulator : BackgroundService
         // Limpia la lista de bolsas del tick anterior
         _context.NewBagsThisTick.Clear();
 
-        // Si no hay orden en curso, busca una nueva. Si no hay ordenes pendientes, termina el tick sin hacer nada
+        // Si no hay orden en curso, busca una nueva. Si no hay órdenes pendientes, termina el tick sin hacer nada
         if (_context.CurrentOrder is null && !StartNextOrder())
         {
             _logger.LogInformation("Tick {Tick}: no hay órdenes pendientes", _tickCount);
             return;
         }
 
-        // Kilos que entran a la linea en este tick: lo configurado (50 kg),
+        // Kilos que entran a la línea en este tick: lo configurado (50 kg),
         // salvo que quede menos en el lote.
         double kgIn = Math.Min(_context.SimulationSettings.KgPerTick, _context.RemainingBatchKg);
         _context.RemainingBatchKg -= kgIn;
 
-        // Recorre las estaciones en el orden de la linea.
+        // Acumulados antes de procesar, para calcular cuánto se sumó en este tick
+        double soilBefore = _context.SoilRemovedKg;
+        double rejectedBefore = _context.RejectedKg;
+
+        // Recorre las estaciones en el orden de la línea.
         // Cada una recibe los kilos que dejó la anterior y devuelve los que pasa a la siguiente
         double kg = kgIn;
         foreach (var station in _context.Stations.OrderBy(s => s.Position))
         {
             kg = station.Process(kg, _context);
         }
+
+        // Registra lo que pasó en este tick: kilos que entraron, tierra y descarte
+        // de este tick (la diferencia con los acumulados de antes) y bolsas producidas
+        _context.RecentTicks.Add(new TickRecord(
+            DateTime.Now,
+            kgIn,
+            _context.SoilRemovedKg - soilBefore,
+            _context.RejectedKg - rejectedBefore,
+            _context.NewBagsThisTick.Count));
+
+        // Mantiene solo los ticks de la ventana (60 con la configuración actual):
+        // si se pasó, saca el más viejo
+        int windowTicks = _context.SimulationSettings.AlarmWindowSeconds / _context.SimulationSettings.TickIntervalSeconds;
+        if (_context.RecentTicks.Count > windowTicks)
+        {
+            _context.RecentTicks.RemoveAt(0);
+        }
+
+        // Evalúa las alarmas con los datos actualizados.
+        // Va antes de CompleteCurrentOrder porque ese método deja CurrentOrder en null
+        _alarmMonitor.Evaluate();
 
         _logger.LogInformation(
             "Tick {Tick} | Orden {Order} | Restan {Remaining:F0} kg | Bolsas nuevas: {NewBags}",
@@ -68,7 +97,6 @@ public class LineSimulator : BackgroundService
         {
             CompleteCurrentOrder();
         }
-
     }
 
     //Busca la primera orden pendiente y la pone en curso.
@@ -93,6 +121,7 @@ public class LineSimulator : BackgroundService
         _context.SmallKg = 0;
         _context.MediumKg = 0;
         _context.LargeKg = 0;
+        _context.RecentTicks.Clear();
 
         _logger.LogInformation("Orden {Order} iniciada: lote de {Kg} kg de {Variety}",
             next.Id, next.Batch.WeightKg, next.Batch.Variety);
