@@ -13,7 +13,7 @@ public class SimulationContext
     public List<Bag> NewBagsThisTick { get;} = new();
 
     public ProductionOrder? CurrentOrder {get; set;}
-    public double RemaingBatchKg {get; set;}
+    public double RemainingBatchKg {get; set;}
 
     public double SoilRemovedKg { get; set; }
     public double RejectedKg { get; set; }
