@@ -31,3 +31,4 @@ C:\Users\Lenovo\VegetableLine\obj\Debug\net10.0\refint\VegetableLine.dll
 C:\Users\Lenovo\VegetableLine\obj\Debug\net10.0\VegetableLine.pdb
 C:\Users\Lenovo\VegetableLine\obj\Debug\net10.0\VegetableLine.genruntimeconfig.cache
 C:\Users\Lenovo\VegetableLine\obj\Debug\net10.0\ref\VegetableLine.dll
+C:\Users\Lenovo\VegetableLine\obj\Debug\net10.0\VegetableLine.sourcelink.json
