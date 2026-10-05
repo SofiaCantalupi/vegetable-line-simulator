@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dotnet build *)",
+      "Bash(S=\"/c/Users/Lenovo/AppData/Local/Temp/claude/c--Users-Lenovo-VegetableLine/b1820ca9-761e-48f1-a0ed-58365aa0c727\"; echo \"--- task output\"; cat \"$S/tasks/bi5sucsaw.output\" 2>/dev/null | tail -5; echo \"--- run.log \\(inicio\\)\"; head -8 \"$S/scratchpad/run.log\"; echo \"--- run.log \\(fin\\)\"; tail -4 \"$S/scratchpad/run.log\"; echo \"--- errores/excepciones\"; grep -c -i -E \"exception|fail:|crit:\" \"$S/scratchpad/run.log\"; echo \"--- puerto 5199\"; netstat -ano | grep -c \":5199 .*LISTENING\")",
+      "Read(//c/Users/Lenovo/AppData/Local/Temp/claude/c--Users-Lenovo-VegetableLine/b1820ca9-761e-48f1-a0ed-58365aa0c727/tasks/**)"
+    ]
+  }
+}

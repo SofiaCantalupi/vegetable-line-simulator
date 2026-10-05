@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("VegetableLine")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6df32f2cf86f0341fea035d0a0cd7c6bd57a0c35")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e8b749e8cecd74145eae326f6bdff010266dc5dc")]
 [assembly: System.Reflection.AssemblyProductAttribute("VegetableLine")]
 [assembly: System.Reflection.AssemblyTitleAttribute("VegetableLine")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

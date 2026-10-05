@@ -1,6 +1,47 @@
 @VegetableLine_HostAddress = http://localhost:5112
 
-GET {{VegetableLine_HostAddress}}/weatherforecast/
+### Estado de la línea y de cada estación
+GET {{VegetableLine_HostAddress}}/api/line/status
+Accept: application/json
+
+### Orden en curso (204 si no hay)
+GET {{VegetableLine_HostAddress}}/api/orders/current
+Accept: application/json
+
+### Todas las órdenes
+GET {{VegetableLine_HostAddress}}/api/orders
+Accept: application/json
+
+### KPIs de la orden en curso (204 si no hay)
+GET {{VegetableLine_HostAddress}}/api/kpis
+Accept: application/json
+
+### Todas las alarmas, de la más reciente a la más vieja
+GET {{VegetableLine_HostAddress}}/api/alarms
+Accept: application/json
+
+### Solo alarmas activas
+GET {{VegetableLine_HostAddress}}/api/alarms?active=true
+Accept: application/json
+
+### Solo alarmas ya normalizadas
+GET {{VegetableLine_HostAddress}}/api/alarms?active=false
+Accept: application/json
+
+### Reconocer una alarma (404 si no existe)
+POST {{VegetableLine_HostAddress}}/api/alarms/1/acknowledge
+Accept: application/json
+
+### Bolsas por minuto de los últimos 30 minutos
+GET {{VegetableLine_HostAddress}}/api/charts/bags-per-minute
+Accept: application/json
+
+### Histograma del peso de las bolsas de la orden en curso (204 si no hay)
+GET {{VegetableLine_HostAddress}}/api/charts/weight-distribution
+Accept: application/json
+
+### Porcentaje de chica, mediana y grande de la orden en curso (204 si no hay)
+GET {{VegetableLine_HostAddress}}/api/charts/grading
 Accept: application/json
 
 ###
