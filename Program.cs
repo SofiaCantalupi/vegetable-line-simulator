@@ -13,10 +13,12 @@ builder.Services.AddControllers()
     .AddJsonOptions(options =>
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
-// El frontend en Angular corre en otro origen
+// Orígenes permitidos, leídos de la configuración (en Render se pueden sobrescribir con variables de entorno)
+var allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>() ?? [];
+
 builder.Services.AddCors(options =>
     options.AddDefaultPolicy(policy => policy
-        .WithOrigins("http://localhost:4200")
+        .WithOrigins(allowedOrigins)
         .AllowAnyHeader()
         .AllowAnyMethod()));
 
@@ -32,8 +34,6 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
-
-app.UseHttpsRedirection();
 
 app.UseCors();
 
