@@ -8,6 +8,8 @@ public class SimulationSettings
     public int MinStoppageSeconds { get; set;} = 10;
     public int MaxStoppageSeconds { get; set;} = 40;
     public int AlarmWindowSeconds { get; set; } = 60;
+    // Pausa entre el fin de la ultima orden y el reinicio del ciclo de demo
+    public int RestartDelaySeconds { get; set; } = 30;
 
     public CleaningSettings Cleaning { get; set; } = new();
     public GradingSettings Grading { get; set; } = new();

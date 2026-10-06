@@ -13,6 +13,8 @@ public class LineSimulator : BackgroundService
     private readonly AlarmMonitor _alarmMonitor;
     //Contador de ticks desde que inicia la app
     private int _tickCount = 0;
+    // Ticks seguidos sin ordenes pendientes, para la pausa antes de reiniciar el ciclo
+    private int _idleTicks = 0;
 
     public LineSimulator(SimulationContext context, ILogger<LineSimulator> logger, AlarmMonitor alarmMonitor)
     {
@@ -46,10 +48,11 @@ public class LineSimulator : BackgroundService
         // Limpia la lista de bolsas del tick anterior
         _context.NewBagsThisTick.Clear();
 
-        // Si no hay orden en curso, busca una nueva. Si no hay órdenes pendientes, termina el tick sin hacer nada
+        // Si no hay orden en curso, busca una nueva (reiniciando el ciclo si ya se procesaron todas).
+        // Si no arranco ninguna (esta en la pausa previa al reinicio), termina el tick sin hacer nada
         if (_context.CurrentOrder is null && !StartNextOrder())
         {
-            _logger.LogInformation("Tick {Tick}: no hay órdenes pendientes", _tickCount);
+            _logger.LogInformation("Tick {Tick}: no hay órdenes pendientes, esperando para reiniciar el ciclo", _tickCount);
             return;
         }
 
@@ -103,12 +106,27 @@ public class LineSimulator : BackgroundService
     }
 
     //Busca la primera orden pendiente y la pone en curso.
-    // Devuelve true si encontro una, false si no quedan pendientes.
+    // Si no quedan pendientes, espera la pausa configurada y reinicia el ciclo con los lotes de prueba.
+    // Devuelve false mientras dura la pausa (o si despues de reiniciar sigue sin haber ordenes).
     private bool StartNextOrder()
     {
         // Primera orden con estado Pending, o null si no hay ninguna
         var next = _context.Orders.FirstOrDefault(o => o.Status == OrderStatus.Pending);
-        if (next is null) return false;
+        if (next is null)
+        {
+            // Se procesaron todos los lotes: como es una demo, vuelve a empezar.
+            // Antes deja pasar unos ticks para que se llegue a leer el resumen final en el dashboard
+            var settings = _context.SimulationSettings;
+            int restartDelayTicks = settings.RestartDelaySeconds / settings.TickIntervalSeconds;
+            _idleTicks++;
+            if (_idleTicks <= restartDelayTicks) return false;
+
+            _idleTicks = 0;
+            _logger.LogInformation("No quedan órdenes pendientes: se reinicia el ciclo con los lotes de prueba");
+            _context.Reset();
+            next = _context.Orders.FirstOrDefault(o => o.Status == OrderStatus.Pending);
+            if (next is null) return false;
+        }
 
         // Marca la orden como en curso
         next.Status = OrderStatus.InProgress;

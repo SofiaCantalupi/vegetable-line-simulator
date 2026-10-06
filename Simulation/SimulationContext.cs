@@ -36,6 +36,19 @@ public class SimulationContext
         SeedData.Populate(this);
     }
 
+    // Vuelve la simulacion al estado inicial: borra todo y carga de nuevo los lotes de prueba.
+    // Hay que llamarlo con SyncLock tomado.
+    public void Reset()
+    {
+        Batches.Clear();
+        Orders.Clear();
+        Stations.Clear();
+        Bags.Clear();
+        Alarms.Clear();
+        RecentTicks.Clear();
+        SeedData.Populate(this);
+    }
+
     // Calcula el estado que se muestra en el dashboard para una estacion
     // La condicion mas grave tiene prioridad.
     public StationStatus GetStationStatus(Station station)
