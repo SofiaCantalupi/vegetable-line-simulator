@@ -154,6 +154,13 @@ public class LineSimulator : BackgroundService
         // OfType<Weigher>() filtra la lista y devuelve solo las pesadoras.
         _context.Stations.OfType<Weigher>().First().AccumulatedKg = 0;
 
+        // Las alarmas se evaluan sobre la orden en curso: al terminarla,
+        // las que siguen activas se normalizan
+        foreach (var alarm in _context.Alarms.Where(a => a.IsActive))
+        {
+            alarm.ResolvedAt = DateTime.Now;
+        }
+
         // Sin orden actual
         _context.CurrentOrder = null;
     }
